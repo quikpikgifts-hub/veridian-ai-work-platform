@@ -57,7 +57,7 @@ function ApiKeyInput() {
   const [status, setStatus] = useState<'idle' | 'saved' | 'testing' | 'ok' | 'error'>('idle');
 
   const save = () => {
-    if (!key.startsWith('sk-ant-')) { setStatus('error'); return; }
+    if (!key.startsWith('sk-')) { setStatus('error'); return; }
     setStatus('saved');
     setTimeout(() => setStatus('idle'), 3000);
   };
@@ -80,7 +80,7 @@ function ApiKeyInput() {
       <div className="relative">
         <input
           type={show ? 'text' : 'password'}
-          placeholder="sk-ant-api03-..."
+          placeholder="sk-proj-..."
           value={key}
           onChange={e => setKey(e.target.value)}
           className="w-full bg-black/30 border border-white/[0.08] text-white text-[12px] px-3 py-2.5 pr-9 rounded-[2px] focus:outline-none focus:border-amber-500/40 transition-colors placeholder:text-white/18 font-mono"
@@ -102,7 +102,7 @@ function ApiKeyInput() {
         {status === 'error' && <span className="text-[10px] text-red-400 flex items-center gap-1"><AlertTriangle className="w-3 h-3" />Invalid key</span>}
       </div>
       <p className="text-[10px] text-white/22 leading-relaxed">
-        For production: set <span className="font-mono text-amber-400/70">ANTHROPIC_API_KEY</span> in Vercel → Settings → Environment Variables
+        For production: set <span className="font-mono text-amber-400/70">OPENAI_API_KEY</span> in Vercel → Settings → Environment Variables
       </p>
     </div>
   );
@@ -120,7 +120,7 @@ export default function SettingsPage() {
   const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
     { key: 'profile',       label: 'Profile',       icon: User        },
     { key: 'notifications', label: 'Notifications', icon: Bell        },
-    { key: 'ai-agents',     label: 'AI Agents',     icon: Cpu         },
+    { key: 'ai-agents',     label: 'Modules',       icon: Cpu         },
     { key: 'security',      label: 'Security',      icon: Lock        },
     { key: 'organization',  label: 'Organization',  icon: Building2   },
   ];
@@ -238,7 +238,7 @@ export default function SettingsPage() {
               <Section title="API Connection">
                 <ApiKeyInput />
               </Section>
-              <Section title="Agent Status">
+              <Section title="Module Status">
                 <div className="space-y-0 divide-y divide-white/[0.04]">
                   {mockAIAgents.map(agent => {
                     const cfg = agentStatusConfig[agent.status];
@@ -317,10 +317,10 @@ export default function SettingsPage() {
                 ))}
               </Section>
               <Section title="Platform">
-                <SettingRow label="Platform Version" desc={`Veridian AI Workforce Platform v${PLATFORM.version}`}>
+                <SettingRow label="Platform Version" desc={`Veridian Risk Platform v${PLATFORM.version}`}>
                   <span className="text-[10px] font-mono text-white/30">v{PLATFORM.version}</span>
                 </SettingRow>
-                <SettingRow label="Deployment" desc="Hosted on Vercel · Next.js 16 · Claude Sonnet 4">
+                <SettingRow label="Deployment" desc="Hosted on Vercel · Next.js 16 · GPT-4.1 · OpenAI">
                   <span className="text-[10px] text-green-400 flex items-center gap-1">
                     <CheckCircle className="w-3 h-3" />Live
                   </span>

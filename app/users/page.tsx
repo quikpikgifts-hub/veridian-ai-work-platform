@@ -18,8 +18,8 @@ const ROLE_CONFIG: Record<User['role'], { label: string; color: string; bg: stri
 };
 
 const PERMISSIONS_MAP: Record<User['role'], string[]> = {
-  admin:    ['All platform access', 'User management', 'Billing', 'AI agents', 'All reports', 'Settings'],
-  operator: ['Incident management', 'Risk assessments', 'Fleet', 'Reports', 'AI agents', 'Workflows'],
+  admin:    ['All platform access', 'User management', 'Billing', 'modules', 'All reports', 'Settings'],
+  operator: ['Incident management', 'Risk assessments', 'Fleet', 'Reports', 'modules', 'Workflows'],
   analyst:  ['Risk assessments', 'Read-only incidents', 'Analytics', 'Reports view'],
   client:   ['Own reports only', 'Incident read', 'Limited dashboard'],
   viewer:   ['Dashboard view only', 'No write access'],

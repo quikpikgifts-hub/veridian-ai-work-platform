@@ -134,9 +134,9 @@ export default function AIOperationsPage() {
         {/* Header */}
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
-            <div className="text-[9px] font-bold tracking-[4px] uppercase text-amber-400/65 mb-1">AI Workforce</div>
-            <h1 className="text-[24px] md:text-[28px] font-bold text-white leading-tight">AI Command Center</h1>
-            <p className="text-[11px] text-white/30 mt-1">11 Agents · Claude Sonnet 4 · All divisions operational</p>
+            <div className="text-[9px] font-bold tracking-[4px] uppercase text-amber-400/65 mb-1">Operations</div>
+            <h1 className="text-[24px] md:text-[28px] font-bold text-white leading-tight">Workforce Operations</h1>
+            <p className="text-[11px] text-white/30 mt-1">Operational consulting modules · All divisions active</p>
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 text-[9px] font-bold text-emerald-400 bg-emerald-500/8 border border-emerald-500/18 px-2.5 py-1.5 rounded-[3px]">
@@ -155,7 +155,7 @@ export default function AIOperationsPage() {
             { l:'Active Agents',    v:totals.active,      c:'text-emerald-400', i:<Brain className="w-3.5 h-3.5"/>       },
             { l:'Tasks Today',      v:totals.tasks,       c:'text-amber-400',  i:<CheckCircle className="w-3.5 h-3.5"/>  },
             { l:'Avg Success Rate', v:`${totals.success}%`,c:'text-blue-400',  i:<TrendingUp className="w-3.5 h-3.5"/>   },
-            { l:'Response Model',   v:'Sonnet 4',         c:'text-purple-400', i:<Cpu className="w-3.5 h-3.5"/>          },
+            { l:'System',   v:'Active',         c:'text-purple-400', i:<Cpu className="w-3.5 h-3.5"/>          },
           ].map((s,i) => (
             <div key={i} className="bg-[#08090F] border border-white/[0.07] p-3.5 rounded-[4px]">
               <div className="flex items-center justify-between mb-2">
@@ -173,8 +173,8 @@ export default function AIOperationsPage() {
           <div className="xl:col-span-2 space-y-4">
             <div className="bg-[#08090F] border border-white/[0.07] border-t-2 border-t-amber-500 rounded-[4px] overflow-hidden">
               <div className="px-4 py-3 border-b border-white/[0.06]">
-                <div className="text-[12px] font-bold text-white/90">AI Agent Roster</div>
-                <div className="text-[10px] text-white/28 mt-0.5">Select an agent to configure and run a task</div>
+                <div className="text-[12px] font-bold text-white/90">Consulting Modules</div>
+                <div className="text-[10px] text-white/28 mt-0.5">Select a module to generate a document or report</div>
               </div>
               <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {mockAIAgents.map(agent => (
@@ -234,7 +234,7 @@ export default function AIOperationsPage() {
                 <div className="flex gap-2">
                   <Button variant="primary" size="md" onClick={run} disabled={loading || !task.trim()} className="flex-1">
                     {loading ? <RefreshCw className="w-3.5 h-3.5 anim-spin" /> : <Play className="w-3.5 h-3.5" />}
-                    {loading ? 'Processing...' : 'Run Agent'}
+                    {loading ? 'Processing...' : 'Generate'}
                   </Button>
                   <Button variant="ghost" size="md" onClick={() => { setOutput(''); setError(''); setTask(DEFAULT_TASKS[selected.id]||''); }}>
                     Reset
@@ -266,10 +266,10 @@ export default function AIOperationsPage() {
             {/* Authority notice */}
             <div className="bg-[#08090F] border border-amber-500/18 border-l-2 border-l-amber-500 p-3.5 rounded-[4px]">
               <div className="flex items-center gap-1.5 text-[8.5px] font-bold uppercase tracking-[2px] text-amber-400 mb-2">
-                <Users className="w-3 h-3" />Authority Protocol
+                <Users className="w-3 h-3" />Review Protocol
               </div>
               <p className="text-[10.5px] text-amber-100/42 leading-relaxed">
-                All AI outputs are drafts requiring Co-Founder review before client delivery. Steve Washington Smith approves all deliverables.
+                All outputs are drafts requiring Co-Founder review before client delivery. Steve Washington Smith approves all deliverables.
               </p>
             </div>
           </div>

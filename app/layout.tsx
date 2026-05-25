@@ -4,10 +4,10 @@ import { ToastProvider } from '@/components/ui/Toast';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Veridian AI Workforce Platform',
+    default: 'Veridian Risk Platform',
     template: '%s · Veridian',
   },
-  description: 'Enterprise AI-powered operational workforce management platform — Veridian Risk & Resilience Group, LLC',
+  description: 'Enterprise operational risk and consulting platform — Veridian Risk & Resilience Group, LLC',
   keywords: ['risk management', 'AI operations', 'workforce platform', 'operational intelligence'],
   authors: [{ name: 'Veridian Risk & Resilience Group, LLC' }],
 };
