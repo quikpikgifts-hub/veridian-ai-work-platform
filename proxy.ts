@@ -1,51 +1,111 @@
 /**
- * proxy.ts (Next.js 16 — replaces middleware.ts)
- * Refreshes Supabase auth sessions on every request.
- * Protects /dashboard/* routes — redirects to /login if unauthenticated.
+ * proxy.ts — Next.js 16 Edge Proxy
+ *
+ * Handles session refresh, authentication, and RBAC route protection.
+ * PUBLIC routes:  /, /login, /consultation
+ * PUBLIC API:     /api/consultation, /api/health, /api/audit
+ * PROTECTED:      everything else — requires valid Supabase session + role
+ *
+ * Demo mode: when Supabase env vars are absent or placeholder values,
+ * ALL routes are open and no redirect occurs.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { canAccessRoute } from '@/lib/rbac';
+
+const PUBLIC_PATHS = new Set(['/', '/login', '/consultation']);
+const PUBLIC_API_PREFIXES = ['/api/health', '/api/consultation', '/api/audit'];
+
+function isPublicPath(pathname: string): boolean {
+  if (PUBLIC_PATHS.has(pathname)) return true;
+  if (PUBLIC_API_PREFIXES.some(p => pathname.startsWith(p))) return true;
+  if (pathname.startsWith('/_next/')) return true;
+  if (pathname.startsWith('/static/')) return true;
+  if (/\.(svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|txt|xml)$/i.test(pathname)) return true;
+  return false;
+}
+
+function isPlaceholder(val: string | undefined | null): boolean {
+  if (!val || val.trim() === '') return true;
+  if (val.includes('your-project-ref')) return true;
+  if (val.trimEnd().endsWith('...')) return true;
+  return false;
+}
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (isPublicPath(pathname)) {
+    return NextResponse.next({ request });
+  }
+
   const supabaseUrl  = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  // No Supabase configured — pass all requests through
-  if (!supabaseUrl || !supabaseAnon) {
-    return NextResponse.next();
+  // Demo / dev mode — Supabase not configured or placeholder values
+  if (isPlaceholder(supabaseUrl) || isPlaceholder(supabaseAnon)) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[proxy] Demo mode active — all routes open.');
+    }
+    return NextResponse.next({ request });
   }
 
   let response = NextResponse.next({ request });
 
-  const supabase = createServerClient(supabaseUrl, supabaseAnon, {
+  const supabase = createServerClient(supabaseUrl!, supabaseAnon!, {
     cookies: {
       getAll() { return request.cookies.getAll(); },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
         response = NextResponse.next({ request });
-        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+        cookiesToSet.forEach(({ name, value, options }) =>
+          response.cookies.set(name, value, {
+            ...options,
+            httpOnly: true,
+            secure:   process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path:     '/',
+          })
+        );
       },
     },
   });
 
-  const { data: { user } } = await supabase.auth.getUser();
+  // getUser() is authoritative — never rely on getSession() alone
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  } catch (err) {
+    console.error('[proxy] getUser() threw:', err);
+    if (process.env.NODE_ENV !== 'production') return NextResponse.next({ request });
+  }
 
-  const isApi      = pathname.startsWith('/api/');
-  const isPublic   = pathname === '/' || pathname === '/login' || pathname.startsWith('/_next') || pathname.startsWith('/static');
-  const isSetup    = pathname === '/platform-setup.html';
-  const isProtected = !isApi && !isPublic && !isSetup;
-
-  if (isProtected && !user) {
+  if (!user) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
+  const role = (user.user_metadata?.role as string) ?? 'viewer';
+
+  // RBAC — authenticated but wrong role → dashboard with error
+  if (!canAccessRoute(role, pathname)) {
+    console.warn(`[proxy] RBAC denied: role=${role} path=${pathname}`);
+    const dashUrl = new URL('/dashboard', request.url);
+    dashUrl.searchParams.set('error', 'unauthorized');
+    return NextResponse.redirect(dashUrl);
+  }
+
+  response.headers.set('x-user-id',    user.id);
+  response.headers.set('x-user-email', user.email ?? '');
+  response.headers.set('x-user-role',  role);
+
   return response;
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 };
