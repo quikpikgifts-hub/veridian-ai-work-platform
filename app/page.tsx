@@ -1,16 +1,9 @@
 import Link from 'next/link';
-import {
-  ArrowRight,
-  Shield,
-  Truck,
-  FileText,
-  AlertTriangle,
-  CheckCircle,
-  Phone,
-  TrendingDown,
-  BookOpen,
-  Eye,
-} from 'lucide-react';
+import type { Metadata } from 'next';
+import { ArrowRight, CheckCircle, Phone } from 'lucide-react';
+import { SiteHeader } from '@/components/marketing/SiteHeader';
+import { SiteFooter } from '@/components/marketing/SiteFooter';
+import { SERVICES, INDUSTRIES, CREDENTIALS, PLATFORM_FEATURES } from '@/lib/site-content';
 
 /* ─────────────────────────────────────────────────────────────
    VERIDIAN RISK GROUP
@@ -18,109 +11,10 @@ import {
    Redesigned: Tailwind-first · Responsive · Accessible
    ───────────────────────────────────────────────────────────── */
 
-// ── Logo ────────────────────────────────────────────────────────
-function VLogo({ className = 'w-7 h-7' }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 36 36"
-      fill="none"
-      aria-label="Veridian Risk Group"
-      role="img"
-      className={className}
-    >
-      <circle cx="18" cy="18" r="15.5" stroke="#C9A84C" strokeWidth="0.5" opacity="0.22" />
-      <circle cx="18" cy="18" r="10"   stroke="#C9A84C" strokeWidth="1.2" opacity="0.55" />
-      <circle cx="18" cy="18" r="2.8"  fill="#C9A84C" />
-      <line x1="18" y1="2.5"  x2="18" y2="8"    stroke="#C9A84C" strokeWidth="1.4" strokeLinecap="round" />
-      <line x1="18" y1="28"   x2="18" y2="33.5"  stroke="#C9A84C" strokeWidth="1.4" strokeLinecap="round" />
-      <line x1="2.5" y1="18"  x2="8"  y2="18"    stroke="#C9A84C" strokeWidth="1.4" strokeLinecap="round" />
-      <line x1="28"  y1="18"  x2="33.5" y2="18"  stroke="#C9A84C" strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M11.5 12 L18 24 L24.5 12" fill="none" stroke="#C9A84C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-// ── Data ─────────────────────────────────────────────────────────
-
-const SERVICES = [
-  {
-    Icon: Shield,
-    title: 'Operational Risk Assessments',
-    body:  'On-site evaluations identifying OSHA compliance gaps, security vulnerabilities, and liability exposures — delivered with a prioritised remediation roadmap.',
-  },
-  {
-    Icon: AlertTriangle,
-    title: 'Incident Documentation',
-    body:  'Legal-grade incident reports, workplace violence response protocols, and structured documentation built for insurance, HR, and litigation support.',
-  },
-  {
-    Icon: BookOpen,
-    title: 'Compliance Advisory',
-    body:  'OSHA 29 CFR 1910 gap analysis, Emergency Action Plans, and regulatory alignment reviews tailored to your industry and workforce.',
-  },
-  {
-    Icon: Truck,
-    title: 'Fleet & Safety Consulting',
-    body:  'DOT compliance audits, driver qualification file reviews, pre-trip inspection systems, and fleet cost-efficiency analysis for logistics operations.',
-  },
-  {
-    Icon: Eye,
-    title: 'Threat Monitoring',
-    body:  'Regional crime-trend analysis, pre-visit situational briefs, and industry-specific threat assessments for proactive risk posture.',
-  },
-  {
-    Icon: FileText,
-    title: 'Executive Reporting',
-    body:  'Professional consulting reports structured for executive review — risk scores, prioritised findings, and clear next steps.',
-  },
-] as const;
-
-const INDUSTRIES = [
-  'Logistics & Fleet',
-  'Retail',
-  'Multifamily Housing',
-  'Healthcare',
-  'Construction',
-  'Fuel & Convenience',
-  'Hospitality',
-  'Schools & Institutions',
-  'Houses of Worship',
-  'Auto Dealerships',
-  'Law Enforcement & Municipal',
-  'Manufacturing',
-] as const;
-
-const CREDENTIALS = [
-  'OSHA 10-Hour General Industry — U.S. Department of Labor',
-  'FEMA IS-100 / IS-200 / IS-700 Certified',
-  'Jamaica Constabulary Force — Detective Corporal, 30 Years',
-  'Sanford Police Department — Community Services Officer',
-  'DOT / FMCSA Fleet Compliance Program Development',
-  'Workplace Violence Prevention Advisory',
-] as const;
-
-const PLATFORM_FEATURES = [
-  {
-    stat: '01',
-    label: 'Incident Intelligence',
-    body: 'Centralised incident registry with structured severity classification, assignment tracking, and exportable documentation.',
-  },
-  {
-    stat: '02',
-    label: 'Risk Scoring Engine',
-    body: 'Site-level risk scores derived from field observations, OSHA citations, and historical incident data — updated at each engagement.',
-  },
-  {
-    stat: '03',
-    label: 'Compliance Workflows',
-    body: 'Guided workflows for OSHA audit preparation, fleet inspection scheduling, and Emergency Action Plan development.',
-  },
-  {
-    stat: '04',
-    label: 'Client Reporting Portal',
-    body: 'Secure access to assessment reports, remediation status, and compliance documentation in one organised workspace.',
-  },
-] as const;
+export const metadata: Metadata = {
+  title: 'Operational Risk & Resilience Consulting',
+  alternates: { canonical: '/' },
+};
 
 // ══════════════════════════════════════════════════════════════════
 //  PAGE
@@ -129,69 +23,7 @@ export default function HomePage() {
   return (
     <div className="bg-[#04050A] text-[#EEF0F6] antialiased overflow-x-hidden">
 
-      {/* ─────────────────────────────────────────────────────────
-          NAVIGATION
-          ───────────────────────────────────────────────────────── */}
-      <header
-        role="banner"
-        className="sticky top-0 z-50 border-b border-white/[0.07] bg-[#04050A]/95 backdrop-blur-xl"
-      >
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between gap-4">
-
-            {/* Brand */}
-            <Link href="/" className="flex items-center gap-3 flex-shrink-0" aria-label="Veridian Risk Group — Home">
-              <VLogo />
-              <div>
-                <span className="block text-[14px] font-bold text-[#EEF0F6] leading-tight tracking-tight">Veridian</span>
-                <span className="block text-[7.5px] font-bold uppercase tracking-[0.28em] text-[#C9A84C]/60 mt-0.5">Risk Group</span>
-              </div>
-            </Link>
-
-            {/* Desktop nav */}
-            <nav aria-label="Primary navigation" className="hidden md:flex items-center gap-1">
-              <a
-                href="tel:+14074705992"
-                className="flex items-center gap-2 text-[11px] text-[#EEF0F6]/38 hover:text-[#EEF0F6]/70 transition-colors px-3 py-2 rounded"
-              >
-                <Phone className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
-                <span>(407) 470-5992</span>
-              </a>
-              <Link
-                href="/login"
-                className="text-[11px] font-medium text-[#EEF0F6]/45 hover:text-[#EEF0F6]/75 transition-colors px-4 py-2"
-              >
-                Client Login
-              </Link>
-              <a
-                href="tel:+14074705992"
-                className="flex items-center gap-2 bg-[#C9A84C] hover:bg-[#D4B560] active:bg-[#B8963C] text-[#03040A] text-[10px] font-bold uppercase tracking-[0.12em] px-5 py-2.5 transition-colors"
-              >
-                (407) 470-5992
-                <ArrowRight className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
-              </a>
-            </nav>
-
-            {/* Mobile nav */}
-            <div className="md:hidden flex items-center gap-2">
-              <Link
-                href="/login"
-                className="text-[11px] font-medium text-[#EEF0F6]/45 hover:text-[#EEF0F6]/70 transition-colors px-3 py-2"
-              >
-                Login
-              </Link>
-              <Link
-                href="/login"
-                className="flex items-center gap-1.5 bg-[#C9A84C] hover:bg-[#D4B560] text-[#03040A] text-[10px] font-bold uppercase tracking-[0.1em] px-4 py-2.5 transition-colors"
-              >
-                Login
-                <ArrowRight className="w-3 h-3" aria-hidden="true" />
-              </Link>
-            </div>
-
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main id="main-content">
 
@@ -506,46 +338,7 @@ export default function HomePage() {
 
       </main>
 
-      {/* ─────────────────────────────────────────────────────────
-          FOOTER
-          ───────────────────────────────────────────────────────── */}
-      <footer role="contentinfo" className="border-t border-white/[0.07] bg-[#04050A]">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
-            {/* Brand */}
-            <div className="flex items-center gap-3">
-              <VLogo className="w-5 h-5" />
-              <span className="text-[11px] font-medium text-[#EEF0F6]/35">
-                © {new Date().getFullYear()} Veridian Risk &amp; Resilience Group, LLC. All rights reserved.
-              </span>
-            </div>
-
-            {/* Footer links */}
-            <nav aria-label="Footer navigation" className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              <Link
-                href="/login"
-                className="text-[11px] text-[#EEF0F6]/30 hover:text-[#EEF0F6]/60 transition-colors"
-              >
-                Client Login
-              </Link>
-              <a
-                href="mailto:director@veridianriskgroup.org"
-                className="text-[11px] text-[#EEF0F6]/30 hover:text-[#EEF0F6]/60 transition-colors"
-              >
-                info@veridianriskgroup.com
-              </a>
-              <span
-                aria-label="Tagline: Operational Risk. Elevated Standard."
-                className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A84C]/35"
-              >
-                Operational Risk. Elevated Standard.
-              </span>
-            </nav>
-
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
 
     </div>
   );

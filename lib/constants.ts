@@ -7,7 +7,7 @@ export const PLATFORM = {
   version:    '2.0.0',
   phone:      '+1 (407) 470-5992',
   email:      'info@veridianriskgroup.com',
-  website:    'veridianriskgroup.com',
+  website:    'veridianresiliencegroupllc.org',
   location:   'Sanford, FL 32773',
   founded:    '2025',
 } as const;

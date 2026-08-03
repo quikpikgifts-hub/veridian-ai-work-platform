@@ -2,7 +2,7 @@
  * proxy.ts — Next.js 16 Edge Proxy
  *
  * Handles session refresh, authentication, and RBAC route protection.
- * PUBLIC routes:  /, /login, /consultation
+ * PUBLIC routes:  /, /login, /consultation, /services, /about
  * PUBLIC API:     /api/consultation, /api/health, /api/audit
  * PROTECTED:      everything else — requires valid Supabase session + role
  *
@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { canAccessRoute } from '@/lib/rbac';
 
-const PUBLIC_PATHS = new Set(['/', '/login', '/consultation']);
+const PUBLIC_PATHS = new Set(['/', '/login', '/consultation', '/services', '/about']);
 const PUBLIC_API_PREFIXES = ['/api/health', '/api/consultation', '/api/audit'];
 
 function isPublicPath(pathname: string): boolean {

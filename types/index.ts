@@ -217,6 +217,7 @@ export interface Report {
   aiGenerated: boolean;
   tags: string[];
   fileUrl?: string;
+  content?: string;
 }
 
 // ── Analytics ─────────────────────────────────────────────────
