@@ -4,17 +4,22 @@
  * Handles session refresh, authentication, and RBAC route protection.
  * PUBLIC routes:  /, /login, /consultation, /services, /about
  * PUBLIC API:     /api/consultation, /api/health, /api/audit
- * PROTECTED:      everything else — requires valid Supabase session + role
+ * PROTECTED:      routes listed in ROUTE_PERMISSIONS (lib/rbac.ts) — require
+ *                 a valid Supabase session + role
+ * EVERYTHING ELSE (unknown paths): passed through to Next's own router, so
+ *                 a mistyped URL renders the real 404 page instead of being
+ *                 redirected to /login.
  *
  * Demo mode: when Supabase env vars are absent or placeholder values,
  * ALL routes are open and no redirect occurs.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
-import { canAccessRoute } from '@/lib/rbac';
+import { canAccessRoute, ROUTE_PERMISSIONS } from '@/lib/rbac';
 
 const PUBLIC_PATHS = new Set(['/', '/login', '/consultation', '/services', '/about']);
 const PUBLIC_API_PREFIXES = ['/api/health', '/api/consultation', '/api/audit'];
+const PROTECTED_PREFIXES = Object.keys(ROUTE_PERMISSIONS);
 
 function isPublicPath(pathname: string): boolean {
   if (PUBLIC_PATHS.has(pathname)) return true;
@@ -23,6 +28,10 @@ function isPublicPath(pathname: string): boolean {
   if (pathname.startsWith('/static/')) return true;
   if (/\.(svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|txt|xml)$/i.test(pathname)) return true;
   return false;
+}
+
+function isProtectedPath(pathname: string): boolean {
+  return PROTECTED_PREFIXES.some(p => pathname === p || pathname.startsWith(`${p}/`));
 }
 
 function isPlaceholder(val: string | undefined | null): boolean {
@@ -36,6 +45,12 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (isPublicPath(pathname)) {
+    return NextResponse.next({ request });
+  }
+
+  // Unknown path (not public, not a recognized protected route) — let
+  // Next.js render its own 404 instead of sending it through the login gate.
+  if (!isProtectedPath(pathname) && !pathname.startsWith('/api/')) {
     return NextResponse.next({ request });
   }
 
