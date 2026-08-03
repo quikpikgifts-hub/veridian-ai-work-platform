@@ -10,12 +10,17 @@ export interface Database {
     Tables: {
       profiles: {
         Row: {
-          id:         string;
-          email:      string;
-          full_name:  string | null;
-          role:       'admin' | 'operator' | 'analyst' | 'client' | 'viewer';
-          created_at: string;
-          updated_at: string;
+          id:          string;
+          name:        string;
+          email:       string;
+          role:        'admin' | 'director' | 'analyst' | 'client' | 'viewer';
+          department:  string | null;
+          status:      'active' | 'inactive' | 'suspended';
+          permissions: string[];
+          last_login:  string | null;
+          avatar_url:  string | null;
+          created_at:  string;
+          updated_at:  string;
         };
         Insert: Omit<Database['public']['Tables']['profiles']['Row'], 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['profiles']['Insert']>;

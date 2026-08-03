@@ -31,7 +31,8 @@ export type Permission =
   | 'settings:view'    | 'settings:write'
   | 'ai-operations:view'
   | 'audit:view'
-  | 'admin:all';
+  | 'admin:all'
+  | 'portal:view';
 
 const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   admin: [
@@ -87,6 +88,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'reports:view',     // own reports only — enforced at query level
     'notifications:view',
     'settings:view',
+    'portal:view',
   ],
   viewer: [
     'dashboard:view',
@@ -111,6 +113,7 @@ export const ROUTE_PERMISSIONS: Record<string, Permission> = {
   '/settings':         'settings:view',
   '/ai-operations':    'ai-operations:view',
   '/admin':            'admin:all',
+  '/portal':           'portal:view',
 };
 
 // ── Core helpers ──────────────────────────────────────────────

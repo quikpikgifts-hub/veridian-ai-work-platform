@@ -86,7 +86,10 @@ export function validateEnv(): void {
     }
   }
 
-  // Supabase vars — required in prod, warn in dev
+  // Supabase vars — optional in every environment, including production.
+  // The rest of the app (proxy.ts, login/signup, /api/health) is explicitly
+  // built to run in "demo mode" without Supabase configured, so this must
+  // never be a hard requirement — only OPENAI_API_KEY is.
   for (const key of supabaseRequired) {
     const val = process.env[key];
     const absent      = !val;
@@ -94,11 +97,7 @@ export function validateEnv(): void {
 
     if (absent || placeholder) {
       const reason = absent ? 'missing' : 'placeholder value';
-      if (IS_PROD) {
-        missingOrPlaceholder.push(`${key} (${reason})`);
-      } else {
-        placeholderWarnings.push(`${key} (${reason}) — Supabase auth disabled, demo mode active`);
-      }
+      placeholderWarnings.push(`${key} (${reason}) — Supabase auth disabled, demo mode active`);
     }
   }
 

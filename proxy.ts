@@ -17,7 +17,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { canAccessRoute, ROUTE_PERMISSIONS } from '@/lib/rbac';
 
-const PUBLIC_PATHS = new Set(['/', '/login', '/consultation', '/services', '/about']);
+const PUBLIC_PATHS = new Set(['/', '/login', '/signup', '/consultation', '/services', '/about']);
 const PUBLIC_API_PREFIXES = ['/api/health', '/api/consultation', '/api/audit'];
 const PROTECTED_PREFIXES = Object.keys(ROUTE_PERMISSIONS);
 
@@ -97,6 +97,9 @@ export async function proxy(request: NextRequest) {
   }
 
   if (!user) {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Authentication required.' }, { status: 401 });
+    }
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(loginUrl);
@@ -107,6 +110,9 @@ export async function proxy(request: NextRequest) {
   // RBAC — authenticated but wrong role → dashboard with error
   if (!canAccessRoute(role, pathname)) {
     console.warn(`[proxy] RBAC denied: role=${role} path=${pathname}`);
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Forbidden for this role.' }, { status: 403 });
+    }
     const dashUrl = new URL('/dashboard', request.url);
     dashUrl.searchParams.set('error', 'unauthorized');
     return NextResponse.redirect(dashUrl);

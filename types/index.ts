@@ -299,3 +299,22 @@ export interface ChartDataPoint {
   color?: string;
   fill?: string;
 }
+
+// ── Client Portal: Self-Service Assessments ────────────────────
+export type AssessmentStatus = 'draft' | 'submitted' | 'completed' | 'failed';
+
+export interface Assessment {
+  id: string;
+  clientUserId: string;
+  companyName: string;
+  industry: string;
+  status: AssessmentStatus;
+  responses: Record<string, string>;
+  riskScore?: number;
+  aiSummary?: string;
+  recommendations?: string[];
+  submittedAt?: string;
+  completedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}

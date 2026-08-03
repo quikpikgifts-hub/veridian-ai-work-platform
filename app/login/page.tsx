@@ -2,8 +2,13 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { Eye, EyeOff, ArrowRight, AlertCircle, Lock, CheckCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+
+function defaultRedirectFor(role: unknown): string {
+  return role === 'client' ? '/portal' : '/dashboard';
+}
 
 function VLogo() {
   return (
@@ -30,18 +35,18 @@ function LoginForm() {
   const [resetMode, setResetMode] = useState(false);
   const [resetSent, setResetSent] = useState(false);
 
-  const router       = useRouter();
-  const searchParams = useSearchParams();
-  const redirectTo   = searchParams.get('redirectTo') ?? '/dashboard';
-  const supabase     = createClient();
+  const router          = useRouter();
+  const searchParams    = useSearchParams();
+  const explicitRedirect = searchParams.get('redirectTo');
+  const supabase        = createClient();
 
-  // If already authenticated, send to dashboard
+  // If already authenticated, send to the right home for their role
   useEffect(() => {
     if (!supabase) return;
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) router.replace(redirectTo);
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) router.replace(explicitRedirect ?? defaultRedirectFor(user.user_metadata?.role));
     });
-  }, [supabase, router, redirectTo]);
+  }, [supabase, router, explicitRedirect]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,12 +57,12 @@ function LoginForm() {
     if (!supabase) {
       setTimeout(() => {
         setLoading(false);
-        router.push(redirectTo);
+        router.push(explicitRedirect ?? '/dashboard');
       }, 600);
       return;
     }
 
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
       email:    email.trim().toLowerCase(),
       password,
     });
@@ -69,7 +74,7 @@ function LoginForm() {
       return;
     }
 
-    router.push(redirectTo);
+    router.push(explicitRedirect ?? defaultRedirectFor(data.user?.user_metadata?.role));
     router.refresh();
   };
 
@@ -292,9 +297,12 @@ export default function LoginPage() {
               <LoginForm />
             </Suspense>
 
-            <div className="mt-5 pt-4 border-t border-white/[0.06] text-center">
+            <div className="mt-5 pt-4 border-t border-white/[0.06] text-center space-y-2">
               <p className="text-[10px] text-white/22">
-                Contact your administrator for access credentials.
+                Staff: contact your administrator for access credentials.
+              </p>
+              <p className="text-[10.5px] text-white/30">
+                New client? <Link href="/signup" className="text-[#C9A84C]/70 hover:text-[#C9A84C]">Create an account</Link>
               </p>
             </div>
           </div>
