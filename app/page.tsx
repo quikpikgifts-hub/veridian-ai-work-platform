@@ -12,7 +12,7 @@ import { SERVICES, INDUSTRIES, CREDENTIALS, PLATFORM_FEATURES } from '@/lib/site
    ───────────────────────────────────────────────────────────── */
 
 export const metadata: Metadata = {
-  title: 'Operational Risk & Resilience Consulting',
+  title: 'Veridian Risk Group — Operational Risk & Resilience Consulting',
   alternates: { canonical: '/' },
 };
 
